@@ -54,7 +54,7 @@ class Alien(pygame.sprite.Sprite):
 
         # jump
 
-        if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
+        if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False and game_over == False:
             self.clicked = True
             self.vel = -10
             self.rect.y += int(self.vel)
@@ -63,7 +63,7 @@ class Alien(pygame.sprite.Sprite):
 
         #animation
 
-        if self.counter > flap_cooldown:
+        if self.counter > flap_cooldown and game_over == False:
             self.counter = 0
             self.index += 1
             if self.index == 3:
@@ -94,11 +94,19 @@ while run:
     bird_group.draw(screen)
     bird_group.update()
 
-    # draw and scroll ground
+    #ground scroll updater
+
     screen.blit(ground_img, (ground_scroll, 180))
-    ground_scroll -= scroll_speed
-    if abs(ground_scroll) > 1000:
-        ground_scroll = 0
+    #ground collision check
+    if flappy.rect.bottom > 389:
+        game_over = True
+        flying = False
+
+    # draw and scroll ground
+    if game_over == False:
+        ground_scroll -= scroll_speed
+        if abs(ground_scroll) > 1000:
+            ground_scroll = 0
 
     # event of quitting the game window
     for event in pygame.event.get():
