@@ -50,8 +50,9 @@ class Alien(pygame.sprite.Sprite):
             self.rect.y += int(self.vel)
 
         # jump
-        if pygame.mouse.get_pressed()[2]:
+        if pygame.mouse.get_pressed()[0] == 1:
             self.vel = -10
+            self.rect.y += int(self.vel)
 
         if self.counter > flap_cooldown:
             self.counter = 0
@@ -92,7 +93,7 @@ while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
-        if event.type == pygame.MOUSEBUTTONDOWN and flying  == False and game_over == False:
+        if event.type == pygame.MOUSEBUTTONDOWN and flying == False and game_over == False:
             flying = True
     # update the game window
     pygame.display.update()
