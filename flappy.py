@@ -1,6 +1,6 @@
 import pygame
 from pygame.locals import *
-
+import random
 pygame.init()
 
 clock = pygame.time.Clock()
@@ -17,6 +17,10 @@ ground_scroll = 0
 scroll_speed = 1.5
 flying = False
 game_over = False
+pipe_gap = 100
+pipe_frequency = 3000 # ms
+last_pipe = pygame.time.get_ticks() - pipe_frequency
+
 # load images
 bg = pygame.image.load("imgs\space background.png")
 ground_img = pygame.image.load("imgs\cartoon ground.png")
@@ -32,7 +36,7 @@ class Alien(pygame.sprite.Sprite):
         self.counter = 0
         for num in range(1, 4):
             img = pygame.image.load(f"imgs\he alien thing{num}.png")
-            img = pygame.transform.scale(img, (64, 64))
+            img = pygame.transform.scale(img, (32, 32))
             self.images.append(img)
         self.image = self.images[self.index]
         self.rect = self.image.get_rect()
@@ -46,17 +50,17 @@ class Alien(pygame.sprite.Sprite):
 
         if flying == True:
             # gravity
-            self.vel += 0.5
+            self.vel += 0.4
             if self.vel > 8:
                 self.vel = 8
             if self.rect.bottom < 390:
                 self.rect.y += int(self.vel)
-        if game_over == False:
+        if game_over == False and flying == True:
             # jump
 
             if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
                 self.clicked = True
-                self.vel = -10
+                self.vel = -6
                 self.rect.y += int(self.vel)
             if pygame.mouse.get_pressed()[0] == 0:
                 self.clicked = False
@@ -72,20 +76,35 @@ class Alien(pygame.sprite.Sprite):
 
             #rotate the bird
             self.image = pygame.transform.rotate(self.images[self.index], self.vel * -1)
-        else:
+        elif game_over == True:
             self.image = pygame.transform.rotate(self.images[self.index], 90)
 
 class Pipe(pygame.sprite.Sprite):
-    def __init__(self,x,y):
+    def __init__(self,x,y,position):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load("imgs\pipe.png")
+        self.rect = self.image.get_rect()
+        #position 1 is from the top, -1 is from the bottom
+        if position == 1:
+            self.image = pygame.transform.flip(self.image, False, True)
+            self.rect.bottomleft = [x,y - int(pipe_gap / 2)]
+        if position == -1:
+            self.rect.topleft = [x,y + int(pipe_gap / 2)]
+    def update(self):
+        if game_over == False:
+            self.rect.x -= scroll_speed
+        if self.rect.right < 0:
+            self.kill()
 
 
 bird_group = pygame.sprite.Group()
+pipe_group = pygame.sprite.Group()
 
 flappy = Alien(50, int(screen_height) / 2)
-
 bird_group.add(flappy)
+
+
+
 
 bird_group.draw(screen)
 bird_group.update()
@@ -101,17 +120,27 @@ while run:
     # draw the alien bird thing
     bird_group.draw(screen)
     bird_group.update()
-
+    pipe_group.draw(screen)
+    pipe_group.update()
     #ground scroll updater
 
-    screen.blit(ground_img, (ground_scroll, 180))
+    screen.blit(ground_img, (ground_scroll, 192))
     #ground collision check
     if flappy.rect.bottom > 389:
         game_over = True
         flying = False
 
     # draw and scroll ground
-    if game_over == False:
+    if game_over == False and flying == True:
+
+        #generate new pipes
+        time_now = pygame.time.get_ticks()
+        if (time_now - last_pipe) > pipe_frequency:
+            pipe_height = random.randint(-80, 80)
+            btm_pipe = Pipe(screen_width + 20, (int(screen_height) / 2) + pipe_height, -1)
+            top_pipe = Pipe(screen_width + 20, (int(screen_height) / 2) + pipe_height, 1)
+            pipe_group.add(btm_pipe, top_pipe)
+            last_pipe = time_now
         ground_scroll -= scroll_speed
         if abs(ground_scroll) > 1000:
             ground_scroll = 0
