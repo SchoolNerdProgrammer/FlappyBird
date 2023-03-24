@@ -17,15 +17,21 @@ ground_scroll = 0
 scroll_speed = 1.5
 flying = False
 game_over = False
-pipe_gap = 100
+pipe_gap = 300
 pipe_frequency = 3000 # ms
 last_pipe = pygame.time.get_ticks() - pipe_frequency
+score_counter = -3
 
+#text font rendering
+font = pygame.font.Font("freesansbold.ttf", 32)
+text = font.render(f"{score_counter}", True, "white")
+textRect = text.get_rect()
+textRect.center = (screen_width/2, 30)
 # load images
 bg = pygame.image.load("imgs\space background.png")
 ground_img = pygame.image.load("imgs\cartoon ground.png")
 ground_img = pygame.transform.scale(ground_img, (1500, 468))
-
+buttom_img = pygame.image.load("imgs\erestart.png")
 
 # alien class
 class Alien(pygame.sprite.Sprite):
@@ -77,7 +83,7 @@ class Alien(pygame.sprite.Sprite):
             #rotate the bird
             self.image = pygame.transform.rotate(self.images[self.index], self.vel * -1)
         elif game_over == True:
-            self.image = pygame.transform.rotate(self.images[self.index], 90)
+            self.image = pygame.transform.rotate(self.images[self.index], -90)
 
 class Pipe(pygame.sprite.Sprite):
     def __init__(self,x,y,position):
@@ -125,6 +131,11 @@ while run:
     #ground scroll updater
 
     screen.blit(ground_img, (ground_scroll, 192))
+
+    #pipe collision check
+    if pygame.sprite.groupcollide(bird_group,pipe_group, False, False) or flappy.rect.bottom < 0:
+        game_over = True
+
     #ground collision check
     if flappy.rect.bottom > 389:
         game_over = True
@@ -141,14 +152,20 @@ while run:
             top_pipe = Pipe(screen_width + 20, (int(screen_height) / 2) + pipe_height, 1)
             pipe_group.add(btm_pipe, top_pipe)
             last_pipe = time_now
+            score_counter += 1
+            print(score_counter)
         ground_scroll -= scroll_speed
         if abs(ground_scroll) > 1000:
             ground_scroll = 0
-
+    if score_counter >= 0:
+        screen.blit(text, textRect)
+        text = font.render(f"{score_counter + 1}", True, "white")
     # event of quitting the game window
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+            pygame.quit()
+            quit()
         if event.type == pygame.MOUSEBUTTONDOWN and flying == False and game_over == False:
             flying = True
     # update the game window
