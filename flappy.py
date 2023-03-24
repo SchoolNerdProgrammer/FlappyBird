@@ -33,6 +33,13 @@ ground_img = pygame.image.load("imgs/cartoon ground.png")
 ground_img = pygame.transform.scale(ground_img, (1500, 468))
 buttom_img = pygame.image.load("imgs/erestart.png")
 
+
+def reset_game():
+    pipe_group.empty()
+    flappy.rect.x = 50
+    flappy.rect.y = int(screen_height / 2)
+    score_counter = -3
+    return score_counter
 # alien class
 class Alien(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -56,7 +63,7 @@ class Alien(pygame.sprite.Sprite):
 
         if flying == True:
             # gravity
-            self.vel += 0.4
+            self.vel += 0.3
             if self.vel > 8:
                 self.vel = 8
             if self.rect.bottom < 390:
@@ -102,13 +109,34 @@ class Pipe(pygame.sprite.Sprite):
         if self.rect.right < 0:
             self.kill()
 
+class Button:
+    def __init__(self, x, y ,image):
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x,y)
+    def draw(self):
+        action = False
 
+        #get mouse pos
+        pos = pygame.mouse.get_pos()
+
+        #check if mosue is over button
+        if self.rect.collidepoint(pos):
+            if pygame.mouse.get_pressed()[0] == 1:
+                action = True
+
+        #draw button
+        screen.blit(self.image, (self.rect.x, self.rect.y))
+
+        return action
 bird_group = pygame.sprite.Group()
 pipe_group = pygame.sprite.Group()
 
 flappy = Alien(50, int(screen_height) / 2)
 bird_group.add(flappy)
 
+# create the button
+button = Button(screen_width // 2 - 70, screen_height // 2 - 120, buttom_img)
 
 
 
@@ -157,6 +185,16 @@ while run:
         ground_scroll -= scroll_speed
         if abs(ground_scroll) > 1000:
             ground_scroll = 0
+
+    #check for gameover and then reset
+    if game_over == True:
+        if button.draw() == True:
+            game_over = False
+            score_counter = reset_game()
+            flappy.image = pygame.transform.rotate(flappy.images[flappy.index], 0)
+
+
+
     if score_counter >= 0:
         screen.blit(text, textRect)
         text = font.render(f"{score_counter + 1}", True, "white")
