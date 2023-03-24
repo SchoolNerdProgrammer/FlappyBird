@@ -51,28 +51,30 @@ class Alien(pygame.sprite.Sprite):
                 self.vel = 8
             if self.rect.bottom < 390:
                 self.rect.y += int(self.vel)
+        if game_over == False:
+            # jump
 
-        # jump
+            if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
+                self.clicked = True
+                self.vel = -10
+                self.rect.y += int(self.vel)
+            if pygame.mouse.get_pressed()[0] == 0:
+                self.clicked = False
 
-        if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False and game_over == False:
-            self.clicked = True
-            self.vel = -10
-            self.rect.y += int(self.vel)
-        if pygame.mouse.get_pressed()[0] == 0:
-            self.clicked = False
+            #animation
 
-        #animation
+            if self.counter > flap_cooldown:
+                self.counter = 0
+                self.index += 1
+                if self.index == 3:
+                    self.index = 0
+            self.image = self.images[self.index]
 
-        if self.counter > flap_cooldown and game_over == False:
-            self.counter = 0
-            self.index += 1
-            if self.index == 3:
-                self.index = 0
-        self.image = self.images[self.index]
+            #rotate the bird
+            self.image = pygame.transform.rotate(self.images[self.index], self.vel * -1)
+        else:
+            self.image = pygame.transform.rotate(self.images[self.index], 90)
 
-        #rotate the bird
-
-        self.image = pygame.transform.rotate(self.images[self.index],self.vel * -1)
 bird_group = pygame.sprite.Group()
 
 flappy = Alien(50, int(screen_height) / 2)
