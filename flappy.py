@@ -17,7 +17,7 @@ ground_scroll = 0
 scroll_speed = 1.5
 flying = False
 game_over = False
-pipe_gap = 300
+pipe_gap = 130
 pipe_frequency = 3000 # ms
 last_pipe = pygame.time.get_ticks() - pipe_frequency
 score_counter = -3
@@ -28,10 +28,10 @@ text = font.render(f"{score_counter}", True, "white")
 textRect = text.get_rect()
 textRect.center = (screen_width/2, 30)
 # load images
-bg = pygame.image.load("imgs\space background.png")
-ground_img = pygame.image.load("imgs\cartoon ground.png")
+bg = pygame.image.load("imgs/space background.png")
+ground_img = pygame.image.load("imgs/cartoon ground.png")
 ground_img = pygame.transform.scale(ground_img, (1500, 468))
-buttom_img = pygame.image.load("imgs\erestart.png")
+buttom_img = pygame.image.load("imgs/erestart.png")
 
 # alien class
 class Alien(pygame.sprite.Sprite):
@@ -41,7 +41,7 @@ class Alien(pygame.sprite.Sprite):
         self.index = 0
         self.counter = 0
         for num in range(1, 4):
-            img = pygame.image.load(f"imgs\he alien thing{num}.png")
+            img = pygame.image.load(f"imgs/he alien thing{num}.png")
             img = pygame.transform.scale(img, (32, 32))
             self.images.append(img)
         self.image = self.images[self.index]
@@ -88,7 +88,7 @@ class Alien(pygame.sprite.Sprite):
 class Pipe(pygame.sprite.Sprite):
     def __init__(self,x,y,position):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load("imgs\pipe.png")
+        self.image = pygame.image.load("imgs/pipe.png")
         self.rect = self.image.get_rect()
         #position 1 is from the top, -1 is from the bottom
         if position == 1:
