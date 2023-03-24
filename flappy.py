@@ -10,7 +10,7 @@ screen_width = 432
 screen_height = 468
 
 screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption("Flappy Alien (Earthquake DLC)")
+pygame.display.set_caption("Flappy Alien")
 
 # game variables
 ground_scroll = 0
@@ -39,20 +39,29 @@ class Alien(pygame.sprite.Sprite):
         self.rect.center = [x, y]
         self.vel = 0
         self.clicked = False
+
     def update(self):
-        # gravity
         self.counter += 1
         flap_cooldown = 4
-        self.vel += 0.5
-        if self.vel > 8:
-            self.vel = 8
-        if self.rect.bottom < 390:
-            self.rect.y += int(self.vel)
+
+        if flying == True:
+            # gravity
+            self.vel += 0.5
+            if self.vel > 8:
+                self.vel = 8
+            if self.rect.bottom < 390:
+                self.rect.y += int(self.vel)
 
         # jump
-        if pygame.mouse.get_pressed()[0] == 1:
+
+        if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
+            self.clicked = True
             self.vel = -10
             self.rect.y += int(self.vel)
+        if pygame.mouse.get_pressed()[0] == 0:
+            self.clicked = False
+
+        #animation
 
         if self.counter > flap_cooldown:
             self.counter = 0
@@ -61,7 +70,9 @@ class Alien(pygame.sprite.Sprite):
                 self.index = 0
         self.image = self.images[self.index]
 
+        #rotate the bird
 
+        self.image = pygame.transform.rotate(self.images[self.index],self.vel * -1)
 bird_group = pygame.sprite.Group()
 
 flappy = Alien(50, int(screen_height) / 2)
