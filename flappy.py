@@ -15,7 +15,8 @@ pygame.display.set_caption("Flappy Alien (Earthquake DLC)")
 # game variables
 ground_scroll = 0
 scroll_speed = 1.5
-
+flying = False
+game_over = False
 # load images
 bg = pygame.image.load("imgs\space background.png")
 ground_img = pygame.image.load("imgs\cartoon ground.png")
@@ -37,10 +38,11 @@ class Alien(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = [x, y]
         self.vel = 0
-
+        self.clicked = False
     def update(self):
+        # gravity
         self.counter += 1
-        flap_cooldown = 5
+        flap_cooldown = 4
         self.vel += 0.5
         if self.vel > 8:
             self.vel = 8
@@ -48,7 +50,7 @@ class Alien(pygame.sprite.Sprite):
             self.rect.y += int(self.vel)
 
         # jump
-        if pygame.mouse.get_pressed()[0] == 1:
+        if pygame.mouse.get_pressed()[2]:
             self.vel = -10
 
         if self.counter > flap_cooldown:
@@ -90,6 +92,7 @@ while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
-
+        if event.type == pygame.MOUSEBUTTONDOWN and flying  == False and game_over == False:
+            flying = True
     # update the game window
     pygame.display.update()
