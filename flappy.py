@@ -30,7 +30,7 @@ class Alien(pygame.sprite.Sprite):
         self.index = 0
         self.counter = 0
         for num in range(1, 4):
-            img = pygame.image.load(f"imgs\ alien thing{num}.png")
+            img = pygame.image.load(f"imgs\he alien thing{num}.png")
             img = pygame.transform.scale(img, (64, 64))
             self.images.append(img)
         self.image = self.images[self.index]
