@@ -1,6 +1,6 @@
 import pygame
-from pygame.locals import *
 import random
+
 pygame.init()
 
 clock = pygame.time.Clock()
@@ -18,15 +18,15 @@ scroll_speed = 1.5
 flying = False
 game_over = False
 pipe_gap = 130
-pipe_frequency = 3000 # ms
+pipe_frequency = 3000  # ms
 last_pipe = pygame.time.get_ticks() - pipe_frequency
 score_counter = -3
 
-#text font rendering
+# text font rendering
 font = pygame.font.Font("freesansbold.ttf", 32)
 text = font.render(f"{score_counter}", True, "white")
 textRect = text.get_rect()
-textRect.center = (screen_width/2, 30)
+textRect.center = (screen_width / 2, 30)
 # load images
 bg = pygame.image.load("imgs/space background.png")
 ground_img = pygame.image.load("imgs/cartoon ground.png")
@@ -38,8 +38,10 @@ def reset_game():
     pipe_group.empty()
     flappy.rect.x = 50
     flappy.rect.y = int(screen_height / 2)
-    score_counter = -3
-    return score_counter
+    counter = -3
+    return counter
+
+
 # alien class
 class Alien(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -61,7 +63,7 @@ class Alien(pygame.sprite.Sprite):
         self.counter += 1
         flap_cooldown = 4
 
-        if flying == True:
+        if flying:
             # gravity
             self.vel += 0.3
             if self.vel > 8:
@@ -78,7 +80,7 @@ class Alien(pygame.sprite.Sprite):
             if pygame.mouse.get_pressed()[0] == 0:
                 self.clicked = False
 
-            #animation
+            # animation
 
             if self.counter > flap_cooldown:
                 self.counter = 0
@@ -87,48 +89,54 @@ class Alien(pygame.sprite.Sprite):
                     self.index = 0
             self.image = self.images[self.index]
 
-            #rotate the bird
+            # rotate the bird
             self.image = pygame.transform.rotate(self.images[self.index], self.vel * -1)
-        elif game_over == True:
+        elif game_over:
             self.image = pygame.transform.rotate(self.images[self.index], -90)
 
+
 class Pipe(pygame.sprite.Sprite):
-    def __init__(self,x,y,position):
+    def __init__(self, x, y, position):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load("imgs/pipe.png")
         self.rect = self.image.get_rect()
-        #position 1 is from the top, -1 is from the bottom
+        # position 1 is from the top, -1 is from the bottom
         if position == 1:
             self.image = pygame.transform.flip(self.image, False, True)
-            self.rect.bottomleft = [x,y - int(pipe_gap / 2)]
+            self.rect.bottomleft = [x, y - int(pipe_gap / 2)]
         if position == -1:
-            self.rect.topleft = [x,y + int(pipe_gap / 2)]
+            self.rect.topleft = [x, y + int(pipe_gap / 2)]
+
     def update(self):
-        if game_over == False:
+        if not game_over:
             self.rect.x -= scroll_speed
         if self.rect.right < 0:
             self.kill()
 
+
 class Button:
-    def __init__(self, x, y ,image):
+    def __init__(self, x, y, image):
         self.image = image
         self.rect = self.image.get_rect()
-        self.rect.topleft = (x,y)
+        self.rect.topleft = (x, y)
+
     def draw(self):
         action = False
 
-        #get mouse pos
+        # get mouse pos
         pos = pygame.mouse.get_pos()
 
-        #check if mosue is over button
+        # check if mosue is over button
         if self.rect.collidepoint(pos):
             if pygame.mouse.get_pressed()[0] == 1:
                 action = True
 
-        #draw button
+        # draw button
         screen.blit(self.image, (self.rect.x, self.rect.y))
 
         return action
+
+
 bird_group = pygame.sprite.Group()
 pipe_group = pygame.sprite.Group()
 
@@ -137,8 +145,6 @@ bird_group.add(flappy)
 
 # create the button
 button = Button(screen_width // 2 - 70, screen_height // 2 - 120, buttom_img)
-
-
 
 bird_group.draw(screen)
 bird_group.update()
@@ -156,15 +162,15 @@ while run:
     bird_group.update()
     pipe_group.draw(screen)
     pipe_group.update()
-    #ground scroll updater
+    # ground scroll updater
 
     screen.blit(ground_img, (ground_scroll, 192))
 
-    #pipe collision check
-    if pygame.sprite.groupcollide(bird_group,pipe_group, False, False) or flappy.rect.bottom < 0:
+    # pipe collision check
+    if pygame.sprite.groupcollide(bird_group, pipe_group, False, False) or flappy.rect.bottom < 0:
         game_over = True
 
-    #ground collision check
+    # ground collision check
     if flappy.rect.bottom > 389:
         game_over = True
         flying = False
@@ -172,7 +178,7 @@ while run:
     # draw and scroll ground
     if game_over == False and flying == True:
 
-        #generate new pipes
+        # generate new pipes
         time_now = pygame.time.get_ticks()
         if (time_now - last_pipe) > pipe_frequency:
             pipe_height = random.randint(-80, 80)
@@ -186,14 +192,12 @@ while run:
         if abs(ground_scroll) > 1000:
             ground_scroll = 0
 
-    #check for gameover and then reset
-    if game_over == True:
-        if button.draw() == True:
+    # check for gameover and then reset
+    if game_over:
+        if button.draw():
             game_over = False
             score_counter = reset_game()
             flappy.image = pygame.transform.rotate(flappy.images[flappy.index], 0)
-
-
 
     if score_counter >= 0:
         screen.blit(text, textRect)
