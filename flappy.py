@@ -14,13 +14,13 @@ pygame.display.set_caption("Flappy Alien")
 
 # game variables
 ground_scroll = 0
-scroll_speed = 8
+scroll_speed = 3 # 3
 flying = False
 game_over = False
-pipe_gap = 130
-pipe_frequency = 760  # ms
+pipe_gap = 130 #130
+pipe_frequency = 2000  # ms #2000
 last_pipe = pygame.time.get_ticks() - pipe_frequency
-score_counter = -3
+score_counter = -2
 
 # text font rendering
 font = pygame.font.Font("freesansbold.ttf", 32)
@@ -38,7 +38,9 @@ def reset_game():
     pipe_group.empty()
     flappy.rect.x = 50
     flappy.rect.y = int(screen_height / 2)
-    counter = -3
+    counter = -2
+    flappy.image = pygame.transform.rotate(flappy.images[flappy.index], 0)
+    flappy.image = flappy.images[0]
     return counter
 
 
@@ -197,7 +199,6 @@ while run:
         if button.draw():
             game_over = False
             score_counter = reset_game()
-            flappy.image = pygame.transform.rotate(flappy.images[flappy.index], 0)
 
     if score_counter >= 0:
         screen.blit(text, textRect)
