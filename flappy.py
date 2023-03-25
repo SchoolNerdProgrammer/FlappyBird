@@ -14,11 +14,11 @@ pygame.display.set_caption("Flappy Alien")
 
 # game variables
 ground_scroll = 0
-scroll_speed = 1.5
+scroll_speed = 8
 flying = False
 game_over = False
 pipe_gap = 130
-pipe_frequency = 3000  # ms
+pipe_frequency = 760  # ms
 last_pipe = pygame.time.get_ticks() - pipe_frequency
 score_counter = -3
 
