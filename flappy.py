@@ -41,6 +41,8 @@ def reset_game():
     counter = -2
     flappy.image = pygame.transform.rotate(flappy.images[flappy.index], 0)
     flappy.image = flappy.images[0]
+    global scroll_speed
+    scroll_speed = 3
     return counter
 
 
@@ -190,6 +192,7 @@ while run:
             last_pipe = time_now
             score_counter += 1
             print(score_counter)
+            scroll_speed += 2
         ground_scroll -= scroll_speed
         if abs(ground_scroll) > 1000:
             ground_scroll = 0
