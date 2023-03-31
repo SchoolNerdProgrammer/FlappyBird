@@ -17,7 +17,7 @@ ground_scroll = 0
 scroll_speed = 3  # 3
 flying = False
 game_over = False
-pipe_gap = 80  # 130
+pipe_gap = 130  # 130
 pipe_frequency = 2000  # ms #2000
 last_pipe = pygame.time.get_ticks() - pipe_frequency
 score_counter = -2
@@ -85,7 +85,6 @@ class Alien(pygame.sprite.Sprite):
                 self.clicked = False
 
             # animation
-
             if self.counter > flap_cooldown:
                 self.counter = 0
                 self.index += 1
@@ -97,6 +96,7 @@ class Alien(pygame.sprite.Sprite):
             self.image = pygame.transform.rotate(self.images[self.index], self.vel * -1)
         elif game_over:
             self.image = pygame.transform.rotate(self.images[self.index], -90)
+            print("rotate")
 
 
 class Pipe(pygame.sprite.Sprite):
