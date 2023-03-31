@@ -14,10 +14,10 @@ pygame.display.set_caption("Flappy Alien")
 
 # game variables
 ground_scroll = 0
-scroll_speed = 3 # 3
+scroll_speed = 3  # 3
 flying = False
 game_over = False
-pipe_gap = 130 #130
+pipe_gap = 80  # 130
 pipe_frequency = 2000  # ms #2000
 last_pipe = pygame.time.get_ticks() - pipe_frequency
 score_counter = -2
@@ -74,10 +74,10 @@ class Alien(pygame.sprite.Sprite):
                 self.vel = 8
             if self.rect.bottom < 390:
                 self.rect.y += int(self.vel)
-        if game_over == False and flying == True:
+        if not game_over and flying:
             # jump
 
-            if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
+            if pygame.mouse.get_pressed()[0] == 1 and not self.clicked:
                 self.clicked = True
                 self.vel = -6
                 self.rect.y += int(self.vel)
