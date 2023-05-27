@@ -96,7 +96,7 @@ class Alien(pygame.sprite.Sprite):
             self.image = pygame.transform.rotate(self.images[self.index], self.vel * -1)
         elif game_over:
             self.image = pygame.transform.rotate(self.images[self.index], -90)
-            print("rotate")
+            #print("rotate")
 
 
 class Pipe(pygame.sprite.Sprite):
@@ -191,7 +191,7 @@ while run:
             pipe_group.add(btm_pipe, top_pipe)
             last_pipe = time_now
             score_counter += 1
-            print(score_counter)
+            #print(score_counter)
             scroll_speed += 2
         ground_scroll -= scroll_speed
         if abs(ground_scroll) > 1000:
